@@ -41,6 +41,7 @@ with header_left:
 with header_right:
     st.subheader("规则解释")
     st.info(score.explanation)
+    st.caption(f"等级含义：{score.level_explanation}")
 
 st.divider()
 
@@ -55,6 +56,23 @@ with ability_left:
 
     for key, value in ability_scores.items():
         st.progress(int(value), text=f"{key}：{value:.0f}/100")
+
+    st.subheader("适岗分贡献拆解")
+    score_detail = pd.DataFrame(
+        [
+            {
+                "维度": item.label,
+                "原始分": item.raw_score,
+                "权重": f"{item.weight:.0%}",
+                "贡献分": item.contribution,
+                "状态": item.status,
+                "解释": item.interpretation,
+            }
+            for item in score.dimensions
+        ]
+    )
+    st.dataframe(score_detail, use_container_width=True, hide_index=True)
+    st.caption("适岗分 = 各维度原始分 × 权重后求和。权重设计见 docs/rules.md。")
 
 with action_right:
     st.subheader("风险原因")

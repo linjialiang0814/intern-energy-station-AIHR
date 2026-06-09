@@ -406,3 +406,30 @@ python scripts/validate_dashboard_data.py
 ### 配置说明
 
 详见 `docs/llm_config.md`。公网部署建议通过 Streamlit Cloud Secrets 配置真实 API Key，不要写入代码仓库。
+
+## 阶段 9：适岗评分解释增强
+
+### 目标
+
+提升评分可信度，让 HR 和导师不仅看到“适岗分”，还能理解分数来源、权重贡献、等级含义和下一步动作依据。
+
+### 已完成
+
+- 更新 `services/scoring_service.py`：
+  - 增加评分维度中文名。
+  - 增加等级解释。
+  - 增加每个维度的权重、原始分、贡献分、状态和解释。
+- 更新 `pages/2_Intern_Profile.py`：
+  - 展示等级含义。
+  - 增加“适岗分贡献拆解”表格。
+- 更新 `pages/1_HR_Dashboard.py`：
+  - 明细表补充导师分、主动性、沟通分和技能匹配分。
+- 新增 `scripts/validate_score_explanations.py`。
+- 更新 `docs/rules.md`。
+
+### 验收标准
+
+- 每个实习生都有 5 个评分维度。
+- 每个维度都有权重、贡献分和解释。
+- 贡献分加总与适岗分一致。
+- 原有评分、风险、Dashboard 和 AI 功能不受影响。

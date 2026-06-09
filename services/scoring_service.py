@@ -14,6 +14,32 @@ SCORE_WEIGHTS = {
     "skill_match_score": 0.10,
 }
 
+SCORE_LABELS = {
+    "task_score": "任务完成度",
+    "mentor_score": "导师评价",
+    "initiative_score": "学习主动性",
+    "communication_score": "沟通协作",
+    "skill_match_score": "岗位技能匹配",
+}
+
+LEVEL_EXPLANATIONS = {
+    "高潜": "可重点培养，具备转正潜力",
+    "稳定": "表现正常，可继续观察并增加真实任务",
+    "需关注": "存在阶段短板，需要导师明确干预",
+    "高风险": "可能不适岗，需要 HR 和导师共同跟进",
+}
+
+
+@dataclass(frozen=True)
+class ScoreDimension:
+    field: str
+    label: str
+    raw_score: float
+    weight: float
+    contribution: float
+    status: str
+    interpretation: str
+
 
 @dataclass(frozen=True)
 class ScoreBreakdown:
@@ -25,6 +51,8 @@ class ScoreBreakdown:
     fit_score: float
     level: str
     explanation: str
+    level_explanation: str
+    dimensions: list[ScoreDimension]
 
 
 def clamp_score(value: object) -> float:
@@ -53,6 +81,47 @@ def calculate_fit_score(record: Mapping[str, object]) -> float:
     for field, weight in SCORE_WEIGHTS.items():
         total += clamp_score(record.get(field)) * weight
     return round(total, 2)
+
+
+def classify_dimension_status(score: float) -> str:
+    if score >= 85:
+        return "优势"
+    if score >= 70:
+        return "稳定"
+    if score >= 60:
+        return "需关注"
+    return "短板"
+
+
+def build_dimension_interpretation(field: str, score: float, status: str) -> str:
+    label = SCORE_LABELS[field]
+    if status == "优势":
+        return f"{label}表现突出，可作为后续培养抓手"
+    if status == "稳定":
+        return f"{label}达到阶段要求，可继续观察"
+    if status == "需关注":
+        return f"{label}存在波动，建议下周设置明确目标"
+    return f"{label}低于预期，需要导师拆解任务并跟进"
+
+
+def build_score_dimensions(record: Mapping[str, object]) -> list[ScoreDimension]:
+    dimensions = []
+    for field, weight in SCORE_WEIGHTS.items():
+        raw_score = clamp_score(record.get(field))
+        contribution = round(raw_score * weight, 2)
+        status = classify_dimension_status(raw_score)
+        dimensions.append(
+            ScoreDimension(
+                field=field,
+                label=SCORE_LABELS[field],
+                raw_score=raw_score,
+                weight=weight,
+                contribution=contribution,
+                status=status,
+                interpretation=build_dimension_interpretation(field, raw_score, status),
+            )
+        )
+    return dimensions
 
 
 def build_score_explanation(record: Mapping[str, object], level: str, fit_score: float) -> str:
@@ -90,8 +159,10 @@ def build_score_explanation(record: Mapping[str, object], level: str, fit_score:
     if not improvements:
         improvements.append("下一阶段可增加真实业务任务沉淀")
 
+    level_reason = LEVEL_EXPLANATIONS[level]
     return (
         f"适岗分 {fit_score:.2f}，等级为{level}。"
+        f"{level_reason}。"
         f"主要优势：{'、'.join(strengths[:2])}。"
         f"改进方向：{'、'.join(improvements[:2])}。"
     )
@@ -103,6 +174,7 @@ def evaluate_fit(record: Mapping[str, object]) -> ScoreBreakdown:
     fit_score = calculate_fit_score(normalized)
     level = classify_fit_level(fit_score)
     explanation = build_score_explanation(normalized, level, fit_score)
+    dimensions = build_score_dimensions(normalized)
     return ScoreBreakdown(
         task_score=normalized["task_score"],
         mentor_score=normalized["mentor_score"],
@@ -112,4 +184,6 @@ def evaluate_fit(record: Mapping[str, object]) -> ScoreBreakdown:
         fit_score=fit_score,
         level=level,
         explanation=explanation,
+        level_explanation=LEVEL_EXPLANATIONS[level],
+        dimensions=dimensions,
     )
