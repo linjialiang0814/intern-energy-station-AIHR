@@ -1,0 +1,44 @@
+import streamlit as st
+
+from services.data_service import get_dashboard_summary
+
+
+st.set_page_config(
+    page_title="实习能量站",
+    page_icon="⚡",
+    layout="wide",
+)
+
+
+summary = get_dashboard_summary()
+metrics = summary["metrics"]
+
+st.title("实习能量站")
+st.subheader("AI 驱动的业务部实习生成长导航智能看板")
+
+st.markdown(
+    """
+这个 Demo 面向 **HR、业务导师、实习生、招聘同学** 四类角色，围绕“看清现状、识别风险、给出行动”三件事展开。
+
+当前版本先完成可演示主干：
+
+- HR 总览看板：查看 20 名实习生整体进度、适岗分布和风险预警。
+- 实习生个人画像：查看个人任务进展、能力评分、风险原因和下一步建议。
+- 导师带教助手：把自然语言反馈转成结构化评价和带教动作。
+- 实习生成长助手：按岗位、周次和短板生成本周成长建议。
+- AI 周报生成：把群体数据整理成 HR 可发送的管理周报。
+- 规则判断底座：用可解释评分模型支撑适岗度和风险等级。
+"""
+)
+
+st.divider()
+
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("实习生总数", metrics["total_interns"])
+col2.metric("高潜人数", metrics["high_potential_count"])
+col3.metric("需关注/高风险", metrics["risk_count"])
+col4.metric("平均适岗分", metrics["avg_fit_score"])
+
+st.info(
+    "建议演示路径：先进入 HR Dashboard 看整体，再选择一个风险实习生进入个人画像页，最后解释系统如何从数据生成行动建议。"
+)
