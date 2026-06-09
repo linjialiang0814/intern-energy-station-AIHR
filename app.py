@@ -39,6 +39,15 @@ col2.metric("高潜人数", metrics["high_potential_count"])
 col3.metric("需关注/高风险", metrics["risk_count"])
 col4.metric("平均适岗分", metrics["avg_fit_score"])
 
-st.info(
-    "建议演示路径：先进入 HR Dashboard 看整体，再选择一个风险实习生进入个人画像页，最后解释系统如何从数据生成行动建议。"
-)
+st.subheader("推荐演示路径")
+demo_steps = [
+    ("1. HR Dashboard", "查看整体态势、风险分布、适岗排名，并导出看板摘要。"),
+    ("2. Intern Profile", "选择一个风险实习生，解释适岗分来源、风险原因和行动建议。"),
+    ("3. Mentor Assistant", "输入导师反馈，生成结构化分析和带教动作。"),
+    ("4. Intern Growth Assistant", "模拟实习生提问，生成本周成长计划。"),
+    ("5. AI Weekly Report", "生成 HR 周报，并下载 Markdown。"),
+]
+for title, desc in demo_steps:
+    st.markdown(f"- **{title}**：{desc}")
+
+st.info("当前版本支持火山方舟 LLM 增强；未配置 API Key 时会自动使用规则模板 fallback，保证 Demo 稳定可演示。")

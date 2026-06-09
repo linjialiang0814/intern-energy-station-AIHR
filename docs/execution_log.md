@@ -433,3 +433,36 @@ python scripts/validate_dashboard_data.py
 - 每个维度都有权重、贡献分和解释。
 - 贡献分加总与适岗分一致。
 - 原有评分、风险、Dashboard 和 AI 功能不受影响。
+
+## 阶段 10：页面体验优化与内容导出
+
+### 目标
+
+提升演示顺滑度和内容可复用性，让 HR 看板、个人画像和周报不仅能看，还能下载、复盘和提交。
+
+### 已完成
+
+- 新增 `services/export_service.py`：
+  - Dashboard Markdown 摘要导出。
+  - 实习生个人画像 Markdown 导出。
+  - DataFrame CSV 导出，使用 UTF-8 BOM 兼容 Excel 中文显示。
+- 更新 `app.py`：
+  - 增加推荐演示路径。
+  - 增加 LLM fallback 说明。
+- 更新 `pages/1_HR_Dashboard.py`：
+  - 增加实习生明细 CSV 下载。
+  - 增加 HR 看板摘要 Markdown 下载。
+- 更新 `pages/2_Intern_Profile.py`：
+  - 增加个人画像 Markdown 下载。
+  - 增加任务记录 CSV 下载。
+- 更新 `pages/4_AI_Weekly_Report.py`：
+  - 保留周报 Markdown 下载。
+  - 增加风险名单 CSV 下载。
+- 新增 `scripts/validate_exports.py`。
+
+### 验收标准
+
+- Dashboard Markdown 包含标题、核心指标、岗位表现和风险对象。
+- 个人画像 Markdown 包含基础信息、评分解释、风险原因和任务记录。
+- CSV 导出带 UTF-8 BOM，便于 Excel 打开中文。
+- 原有规则、Dashboard、AI 和 LLM fallback 验收不受影响。

@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from services.data_service import get_intern_options, get_intern_profile, parse_intern_id
+from services.export_service import build_filename_safe_name, build_profile_markdown, dataframe_to_csv_bytes
 
 
 st.set_page_config(page_title="实习生个人画像", layout="wide")
@@ -120,3 +121,20 @@ task_table = task_records[
     }
 )
 st.dataframe(task_table, use_container_width=True, hide_index=True)
+
+export_left, export_right = st.columns(2)
+safe_name = build_filename_safe_name(str(profile["name"]))
+with export_left:
+    st.download_button(
+        "下载个人画像 Markdown",
+        data=build_profile_markdown(data),
+        file_name=f"{safe_name}_profile.md",
+        mime="text/markdown",
+    )
+with export_right:
+    st.download_button(
+        "下载任务记录 CSV",
+        data=dataframe_to_csv_bytes(task_table),
+        file_name=f"{safe_name}_tasks.csv",
+        mime="text/csv",
+    )

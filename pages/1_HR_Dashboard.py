@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from services.data_service import get_dashboard_summary
+from services.export_service import build_dashboard_markdown, dataframe_to_csv_bytes
 
 
 st.set_page_config(page_title="HR Dashboard", layout="wide")
@@ -131,8 +132,25 @@ display_columns = {
     "risk_level": "风险等级",
     "ai_summary": "摘要",
 }
+display_dataset = dataset[list(display_columns)].rename(columns=display_columns)
 st.dataframe(
-    dataset[list(display_columns)].rename(columns=display_columns),
+    display_dataset,
     use_container_width=True,
     hide_index=True,
 )
+
+export_left, export_right = st.columns(2)
+with export_left:
+    st.download_button(
+        "下载实习生明细 CSV",
+        data=dataframe_to_csv_bytes(display_dataset),
+        file_name="intern_dashboard_details.csv",
+        mime="text/csv",
+    )
+with export_right:
+    st.download_button(
+        "下载 HR 看板摘要 Markdown",
+        data=build_dashboard_markdown(summary),
+        file_name="hr_dashboard_summary.md",
+        mime="text/markdown",
+    )

@@ -1,6 +1,7 @@
 import streamlit as st
 
 from services.data_service import get_dashboard_summary
+from services.export_service import dataframe_to_csv_bytes
 from services.report_service import generate_report_outline, generate_weekly_report
 
 
@@ -40,6 +41,14 @@ with right:
         data=report,
         file_name="intern_weekly_report.md",
         mime="text/markdown",
+    )
+    st.download_button(
+        "下载风险名单 CSV",
+        data=dataframe_to_csv_bytes(summary["dataset"][summary["dataset"]["risk_level"] != "低风险"][
+            ["intern_id", "name", "role", "mentor_name", "fit_score", "level", "risk_level"]
+        ]),
+        file_name="intern_risk_list.csv",
+        mime="text/csv",
     )
 
 st.info("当前版本使用规则与模板生成稳定周报；后续接入 LLM 后，可把同一份结构化数据交给模型润色和扩写。")
