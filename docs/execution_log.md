@@ -496,3 +496,34 @@ python scripts/validate_dashboard_data.py
 ### 第二阶段收口判断
 
 第二阶段完成，可以进入最终演示、提交和轻量维护。后续如继续推进，应优先做数据持久化、角色权限、历史趋势和 GitHub Actions 测试。
+
+## 第三阶段：产品化提升
+
+### 阶段 12：pytest 与 GitHub Actions
+
+#### 目标
+
+将第二阶段已有的验证能力升级为更标准的测试与 CI 流程，让每次推送后都能自动检查核心功能是否可用。
+
+#### 已完成
+
+- 更新 `requirements.txt`：新增 `pytest`。
+- 新增 `tests/test_core.py`：
+  - 检查 Dashboard 数据聚合。
+  - 检查适岗评分解释。
+  - 检查个人画像任务与行动建议。
+  - 检查导师反馈和成长助手输出。
+  - 检查 LLM fallback。
+  - 检查 Markdown / CSV 导出。
+- 新增 `.github/workflows/ci.yml`：
+  - push 到 `main` 时自动运行。
+  - pull request 到 `main` 时自动运行。
+  - 执行 `python -m pytest -q` 和 `python scripts/quality_check.py`。
+- 更新 `README.md`：补充 pytest 和 CI 说明。
+
+#### 后续产品化提升优先级
+
+1. SQLite + 导师反馈持久化。
+2. 角色视角与权限模拟增强。
+3. 历史趋势分析。
+4. 使用真实历史数据校准评分权重。

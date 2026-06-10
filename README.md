@@ -54,6 +54,12 @@ http://localhost:8501
 python scripts/quality_check.py
 ```
 
+运行 pytest：
+
+```bash
+python -m pytest -q
+```
+
 也可以分模块执行：
 
 ```bash
@@ -94,3 +100,12 @@ python -m py_compile @files
 - 第二阶段工程化总结：[docs/engineering_review.md](docs/engineering_review.md)
 - 执行记录：[docs/execution_log.md](docs/execution_log.md)
 - 作业题目备份：[docs/assignment.md](docs/assignment.md)
+
+## CI
+
+项目已配置 GitHub Actions：`.github/workflows/ci.yml`。
+
+每次 push / pull request 到 `main` 时会自动执行：
+
+1. `python -m pytest -q`
+2. `python scripts/quality_check.py`

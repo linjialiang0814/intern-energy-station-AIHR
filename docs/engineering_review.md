@@ -54,7 +54,7 @@
    使用真实历史数据回看评分权重，评估适岗分与转正结果的相关性。
 
 6. 更正式的测试体系  
-   将 `validate_*.py` 迁移为 `pytest` 测试，接入 GitHub Actions。
+   已在第三阶段启动：新增 pytest 测试和 GitHub Actions。后续可继续扩展覆盖率。
 
 ## 第二阶段收口判断
 
