@@ -16,6 +16,7 @@ VALIDATION_SCRIPTS = [
     "validate_llm_fallback.py",
     "validate_score_explanations.py",
     "validate_exports.py",
+    "validate_role_permissions.py",
 ]
 
 

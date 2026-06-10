@@ -1,7 +1,13 @@
 import pandas as pd
 import streamlit as st
 
-from services.data_service import get_intern_options, get_intern_profile, parse_intern_id
+from services.auth_service import (
+    build_intern_options,
+    ensure_options,
+    render_role_selector,
+    render_scope_controls,
+)
+from services.data_service import get_evaluation_dataset, get_intern_profile, parse_intern_id
 from services.export_service import build_filename_safe_name, build_profile_markdown, dataframe_to_csv_bytes
 
 
@@ -10,7 +16,10 @@ st.set_page_config(page_title="实习生个人画像", layout="wide")
 st.title("实习生个人画像")
 st.caption("把个人基础信息、任务进度、能力评分、导师反馈和下一步动作放在同一个视图里。")
 
-options = get_intern_options()
+role = render_role_selector()
+dataset = get_evaluation_dataset()
+scoped_dataset = render_scope_controls(role, dataset, "intern_profile")
+options = ensure_options(build_intern_options(scoped_dataset))
 selected = st.sidebar.selectbox("选择实习生", options)
 intern_id = parse_intern_id(selected)
 data = get_intern_profile(intern_id)

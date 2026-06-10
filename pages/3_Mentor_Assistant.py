@@ -1,6 +1,13 @@
 import streamlit as st
 
-from services.data_service import clear_data_cache, get_intern_options, get_intern_profile, parse_intern_id
+from services.auth_service import (
+    build_intern_options,
+    ensure_options,
+    render_role_selector,
+    render_scope_controls,
+    require_page_access,
+)
+from services.data_service import clear_data_cache, get_evaluation_dataset, get_intern_profile, parse_intern_id
 from services.mentor_feedback_service import analyze_mentor_feedback
 from services.storage_service import load_feedback_history, save_mentor_feedback
 
@@ -10,7 +17,11 @@ st.set_page_config(page_title="导师带教助手", layout="wide")
 st.title("导师带教助手")
 st.caption("导师输入自然语言反馈，系统输出结构化评价、风险判断和下一步带教动作。")
 
-options = get_intern_options()
+role = render_role_selector()
+require_page_access(role, "mentor_assistant")
+dataset = get_evaluation_dataset()
+scoped_dataset = render_scope_controls(role, dataset, "mentor_assistant")
+options = ensure_options(build_intern_options(scoped_dataset))
 selected = st.sidebar.selectbox("选择实习生", options)
 intern_id = parse_intern_id(selected)
 profile_data = get_intern_profile(intern_id)

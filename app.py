@@ -1,5 +1,6 @@
 import streamlit as st
 
+from services.auth_service import render_role_selector, role_permission_summary
 from services.data_service import get_dashboard_summary
 
 
@@ -12,6 +13,7 @@ st.set_page_config(
 
 summary = get_dashboard_summary()
 metrics = summary["metrics"]
+role = render_role_selector()
 
 st.title("实习能量站")
 st.subheader("AI 驱动的业务部实习生成长导航智能看板")
@@ -51,3 +53,7 @@ for title, desc in demo_steps:
     st.markdown(f"- **{title}**：{desc}")
 
 st.info("当前版本支持火山方舟 LLM 增强；未配置 API Key 时会自动使用规则模板 fallback，保证 Demo 稳定可演示。")
+
+st.subheader("角色视角与权限模拟")
+st.write(f"当前模拟角色：**{role}**。这是一套演示用视角控制，不等同于真实登录鉴权。")
+st.dataframe(role_permission_summary(), use_container_width=True, hide_index=True)

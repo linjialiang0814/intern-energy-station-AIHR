@@ -5,6 +5,7 @@ from services.llm_service import call_llm
 from services.mentor_feedback_service import analyze_mentor_feedback
 from services.scoring_service import SCORE_WEIGHTS, evaluate_fit
 from services.storage_service import init_database, load_all_tables, load_feedback_history, save_mentor_feedback
+from services.auth_service import ROLE_HR, ROLE_INTERN, ROLE_MENTOR, ROLE_RECRUITER, can_access, scope_dataset
 
 
 def test_dashboard_summary_shape():
@@ -104,3 +105,24 @@ def test_sqlite_seed_and_feedback_persistence():
     assert "测试反馈" in updated_feedback
     assert len(history) == 1
     assert "主动同步" in history.iloc[0]["feedback_text"]
+
+
+def test_role_permissions_and_scope_filters():
+    summary = get_dashboard_summary()
+    dataset = summary["dataset"]
+
+    assert can_access(ROLE_HR, "hr_dashboard")
+    assert can_access(ROLE_RECRUITER, "weekly_report")
+    assert not can_access(ROLE_MENTOR, "hr_dashboard")
+    assert not can_access(ROLE_INTERN, "weekly_report")
+    assert can_access(ROLE_INTERN, "growth_assistant")
+
+    mentor_id = dataset.iloc[0]["mentor_id"]
+    mentor_view = scope_dataset(dataset, ROLE_MENTOR, mentor_id=mentor_id)
+    assert len(mentor_view) > 0
+    assert set(mentor_view["mentor_id"]) == {mentor_id}
+
+    intern_id = dataset.iloc[0]["intern_id"]
+    intern_view = scope_dataset(dataset, ROLE_INTERN, intern_id=intern_id)
+    assert len(intern_view) == 1
+    assert intern_view.iloc[0]["intern_id"] == intern_id

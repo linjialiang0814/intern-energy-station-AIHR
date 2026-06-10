@@ -1,11 +1,15 @@
 import pandas as pd
 import streamlit as st
 
+from services.auth_service import render_role_selector, require_page_access
 from services.data_service import get_dashboard_summary
 from services.export_service import build_dashboard_markdown, dataframe_to_csv_bytes
 
 
 st.set_page_config(page_title="HR Dashboard", layout="wide")
+
+role = render_role_selector()
+require_page_access(role, "hr_dashboard")
 
 summary = get_dashboard_summary()
 metrics = summary["metrics"]

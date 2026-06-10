@@ -1,5 +1,6 @@
 import streamlit as st
 
+from services.auth_service import render_role_selector, require_page_access
 from services.data_service import get_dashboard_summary
 from services.export_service import dataframe_to_csv_bytes
 from services.report_service import generate_report_outline, generate_weekly_report
@@ -9,6 +10,9 @@ st.set_page_config(page_title="AI 周报生成", layout="wide")
 
 st.title("AI 周报生成")
 st.caption("把看板中的群体数据自动整理成 HR 可发送、可复盘的管理周报。")
+
+role = render_role_selector()
+require_page_access(role, "weekly_report")
 
 summary = get_dashboard_summary()
 metrics = summary["metrics"]

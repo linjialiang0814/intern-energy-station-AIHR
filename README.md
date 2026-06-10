@@ -14,6 +14,7 @@ AI 驱动的业务部实习生成长导航智能看板。
 - 帮导师把自然语言反馈转成结构化评价、带教动作和反馈话术。
 - 帮实习生明确当前阶段该学什么、做什么、问导师什么。
 - 帮招聘同学查看适岗分、风险等级和后续培养建议。
+- 支持 HR、导师、实习生、招聘同学的演示级角色视角和数据范围控制。
 
 ## 功能模块
 
@@ -30,6 +31,7 @@ AI 驱动的业务部实习生成长导航智能看板。
 - 数据处理：Pandas
 - AI 能力：规则 + 模板 fallback，预留 Prompt 模板用于后续接入 LLM API
 - LLM 接入：支持火山引擎方舟 OpenAI 兼容接口，未配置时自动 fallback
+- 权限模拟：Streamlit 侧边栏角色切换 + 页面访问控制 + 可见数据范围过滤
 - 部署建议：Streamlit Cloud 或 Hugging Face Spaces
 
 ## 本地运行
@@ -105,6 +107,7 @@ python -m py_compile @files
 - 部署说明：[docs/deployment.md](docs/deployment.md)
 - LLM 配置说明：[docs/llm_config.md](docs/llm_config.md)
 - SQLite 数据持久化说明：[docs/storage.md](docs/storage.md)
+- 角色权限模拟说明：[docs/role_permissions.md](docs/role_permissions.md)
 - 第二阶段工程化总结：[docs/engineering_review.md](docs/engineering_review.md)
 - 执行记录：[docs/execution_log.md](docs/execution_log.md)
 - 作业题目备份：[docs/assignment.md](docs/assignment.md)
