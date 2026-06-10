@@ -4,6 +4,7 @@ from services.growth_plan_service import generate_growth_plan
 from services.llm_service import call_llm
 from services.mentor_feedback_service import analyze_mentor_feedback
 from services.scoring_service import SCORE_WEIGHTS, evaluate_fit
+from services.storage_service import init_database, load_all_tables, load_feedback_history, save_mentor_feedback
 
 
 def test_dashboard_summary_shape():
@@ -76,3 +77,30 @@ def test_export_outputs():
     assert "实习生个人画像" in profile_md
     assert "评分贡献拆解" in profile_md
     assert csv_bytes.startswith(b"\xef\xbb\xbf")
+
+
+def test_sqlite_seed_and_feedback_persistence():
+    from pathlib import Path
+
+    db_path = Path("data/test_runtime.db")
+
+    init_database(db_path, force=True)
+    tables = load_all_tables(db_path)
+
+    assert len(tables["interns"]) == 20
+    assert len(tables["mentor_feedback"]) == 20
+
+    save_mentor_feedback(
+        intern_id="I001",
+        mentor_id="M006",
+        week=2,
+        feedback_text="测试反馈：本周能完成任务，但主动同步仍需加强。",
+        db_path=db_path,
+    )
+    updated_tables = load_all_tables(db_path)
+    updated_feedback = updated_tables["mentor_feedback"].set_index("intern_id").loc["I001", "feedback_text"]
+    history = load_feedback_history("I001", db_path)
+
+    assert "测试反馈" in updated_feedback
+    assert len(history) == 1
+    assert "主动同步" in history.iloc[0]["feedback_text"]

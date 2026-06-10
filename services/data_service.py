@@ -1,4 +1,4 @@
-"""CSV data loading and aggregation for dashboard pages."""
+"""Data loading and aggregation for dashboard pages."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ import pandas as pd
 
 from services.risk_service import assess_risk
 from services.scoring_service import evaluate_fit
+from services.storage_service import load_all_tables
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,15 +23,23 @@ def _read_csv(name: str) -> pd.DataFrame:
 
 @lru_cache(maxsize=1)
 def load_tables() -> dict[str, pd.DataFrame]:
-    """Load all MVP CSV tables."""
-    return {
-        "interns": _read_csv("interns.csv"),
-        "mentors": _read_csv("mentors.csv"),
-        "weekly_tasks": _read_csv("weekly_tasks.csv"),
-        "intern_progress": _read_csv("intern_progress.csv"),
-        "mentor_feedback": _read_csv("mentor_feedback.csv"),
-        "evaluation_results": _read_csv("evaluation_results.csv"),
-    }
+    """Load all MVP tables from SQLite, falling back to CSV seed files."""
+    try:
+        return load_all_tables()
+    except Exception:
+        return {
+            "interns": _read_csv("interns.csv"),
+            "mentors": _read_csv("mentors.csv"),
+            "weekly_tasks": _read_csv("weekly_tasks.csv"),
+            "intern_progress": _read_csv("intern_progress.csv"),
+            "mentor_feedback": _read_csv("mentor_feedback.csv"),
+            "evaluation_results": _read_csv("evaluation_results.csv"),
+        }
+
+
+def clear_data_cache() -> None:
+    """Clear cached tables after data mutations."""
+    load_tables.cache_clear()
 
 
 def get_evaluation_dataset() -> pd.DataFrame:

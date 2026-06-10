@@ -1,7 +1,8 @@
 import streamlit as st
 
-from services.data_service import get_intern_options, get_intern_profile, parse_intern_id
+from services.data_service import clear_data_cache, get_intern_options, get_intern_profile, parse_intern_id
 from services.mentor_feedback_service import analyze_mentor_feedback
+from services.storage_service import load_feedback_history, save_mentor_feedback
 
 
 st.set_page_config(page_title="导师带教助手", layout="wide")
@@ -39,7 +40,9 @@ with left:
         height=180,
         help="可以输入自然语言，例如：本周完成了接口文档阅读，但代码提交较少，开会表达不够主动。",
     )
-    analyze_clicked = st.button("生成结构化分析", type="primary")
+    button_left, button_right = st.columns(2)
+    analyze_clicked = button_left.button("生成结构化分析", type="primary")
+    save_clicked = button_right.button("保存导师反馈")
 
 with right:
     st.subheader("示例反馈")
@@ -50,6 +53,17 @@ with right:
     st.write("这个模块体现的 AI 价值：把导师的主观反馈转成可复用、可跟进、可沉淀的结构化结论。")
 
 st.divider()
+
+if save_clicked:
+    save_mentor_feedback(
+        intern_id=profile["intern_id"],
+        mentor_id=profile["mentor_id"],
+        week=int(profile["current_week"]),
+        feedback_text=feedback_text,
+    )
+    clear_data_cache()
+    st.success("导师反馈已保存，个人画像和周报会读取最新反馈。")
+    st.rerun()
 
 if analyze_clicked or feedback_text:
     analysis = analyze_mentor_feedback(feedback_text, profile)
@@ -87,3 +101,23 @@ if analyze_clicked or feedback_text:
 
         st.subheader("AI 补充洞察")
         st.info(analysis.ai_insight)
+
+st.divider()
+st.subheader("反馈历史")
+history = load_feedback_history(intern_id)
+if history.empty:
+    st.caption("暂无新增反馈历史。保存一次导师反馈后会在这里显示。")
+else:
+    st.dataframe(
+        history.rename(
+            columns={
+                "week": "周次",
+                "feedback_text": "反馈内容",
+                "created_at": "保存时间",
+                "mentor_id": "导师 ID",
+                "intern_id": "实习生 ID",
+            }
+        ),
+        use_container_width=True,
+        hide_index=True,
+    )

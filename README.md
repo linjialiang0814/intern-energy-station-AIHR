@@ -37,6 +37,7 @@ AI 驱动的业务部实习生成长导航智能看板。
 ```bash
 pip install -r requirements.txt
 python scripts/generate_mock_data.py
+python scripts/init_db.py
 python -m streamlit run app.py
 ```
 
@@ -68,6 +69,12 @@ python scripts/validate_dashboard_data.py
 python scripts/validate_ai_features.py
 ```
 
+初始化或重建 SQLite 数据库：
+
+```bash
+python scripts/init_db.py --force
+```
+
 在 PowerShell 中执行全量语法检查：
 
 ```powershell
@@ -97,6 +104,7 @@ python -m py_compile @files
 - 演示脚本：[docs/demo_script.md](docs/demo_script.md)
 - 部署说明：[docs/deployment.md](docs/deployment.md)
 - LLM 配置说明：[docs/llm_config.md](docs/llm_config.md)
+- SQLite 数据持久化说明：[docs/storage.md](docs/storage.md)
 - 第二阶段工程化总结：[docs/engineering_review.md](docs/engineering_review.md)
 - 执行记录：[docs/execution_log.md](docs/execution_log.md)
 - 作业题目备份：[docs/assignment.md](docs/assignment.md)

@@ -527,3 +527,33 @@ python scripts/validate_dashboard_data.py
 2. 角色视角与权限模拟增强。
 3. 历史趋势分析。
 4. 使用真实历史数据校准评分权重。
+
+### 阶段 13：SQLite 与导师反馈持久化
+
+#### 目标
+
+将 CSV 种子数据升级为 SQLite 运行时数据层，并让导师在页面输入的新反馈可以保存、复用和进入个人画像/周报。
+
+#### 已完成
+
+- 新增 `services/storage_service.py`：
+  - 从 CSV 初始化 SQLite。
+  - 读取 SQLite 表。
+  - 保存导师反馈。
+  - 记录导师反馈历史。
+- 新增 `scripts/init_db.py`：
+  - 支持 `python scripts/init_db.py` 初始化数据库。
+  - 支持 `python scripts/init_db.py --force` 从 CSV 重建数据库。
+- 更新 `services/data_service.py`：
+  - 优先读取 SQLite。
+  - SQLite 不可用时回退 CSV。
+  - 新增 `clear_data_cache()`，保存反馈后刷新缓存。
+- 更新 `pages/3_Mentor_Assistant.py`：
+  - 新增“保存导师反馈”按钮。
+  - 新增反馈历史表。
+- 新增 `docs/storage.md`。
+- 更新 pytest：增加 SQLite 初始化与反馈持久化测试。
+
+#### 当前限制
+
+SQLite 适合本项目 Demo 和轻量持久化，但 Streamlit Cloud 本地文件系统不适合长期多用户生产数据。后续正式生产化应迁移 PostgreSQL，并增加角色权限与审计日志。

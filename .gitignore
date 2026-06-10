@@ -9,3 +9,7 @@ env/
 pytest-cache-files-*/
 .mypy_cache/
 *.log
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+data/test_runtime.db

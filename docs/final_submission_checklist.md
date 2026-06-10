@@ -31,6 +31,7 @@ python scripts/quality_check.py
 python scripts/validate_rules.py
 python scripts/validate_dashboard_data.py
 python scripts/validate_ai_features.py
+python scripts/init_db.py
 ```
 
 PowerShell 语法检查：
