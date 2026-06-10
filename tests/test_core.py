@@ -48,6 +48,8 @@ def test_ai_feature_fallback_outputs():
     assert analysis.weaknesses
     assert analysis.mentor_actions
     assert analysis.ai_insight
+    assert len(growth_plan.roadmap_30_60_90) == 3
+    assert all(item["阶段"] for item in growth_plan.roadmap_30_60_90)
     assert growth_plan.learning_focus
     assert growth_plan.recommended_tasks
     assert growth_plan.mentor_questions

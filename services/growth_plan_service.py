@@ -34,6 +34,7 @@ ROLE_FOCUS = {
 @dataclass(frozen=True)
 class GrowthPlan:
     stage: str
+    roadmap_30_60_90: list[dict[str, str]]
     learning_focus: list[str]
     recommended_tasks: list[str]
     deliverables: list[str]
@@ -49,6 +50,73 @@ def classify_stage(week: int) -> str:
     if week <= 4:
         return "小任务实践与反馈校准"
     return "独立承担小模块与成果沉淀"
+
+
+def generate_30_60_90_roadmap(role: str) -> list[dict[str, str]]:
+    """Return a role-specific 30-60-90 day growth roadmap."""
+    roadmaps = {
+        "研发": [
+            {
+                "阶段": "0-30 天",
+                "目标": "熟悉代码库、开发流程和测试环境",
+                "关键任务": "完成环境搭建、阅读核心模块、修复低风险缺陷",
+                "交付物": "环境记录、代码提交、自测截图",
+            },
+            {
+                "阶段": "31-60 天",
+                "目标": "参与模块开发并形成稳定交付节奏",
+                "关键任务": "完成小需求开发、补充单元测试、参与代码评审",
+                "交付物": "需求代码、测试用例、评审记录",
+            },
+            {
+                "阶段": "61-90 天",
+                "目标": "独立承担小模块并沉淀复盘",
+                "关键任务": "负责一个小模块闭环、定位线上问题、输出技术复盘",
+                "交付物": "模块交付、问题复盘、改进建议",
+            },
+        ],
+        "产品": [
+            {
+                "阶段": "0-30 天",
+                "目标": "理解业务、用户和产品流程",
+                "关键任务": "阅读业务资料、体验核心流程、完成竞品观察",
+                "交付物": "业务流程图、竞品分析、问题清单",
+            },
+            {
+                "阶段": "31-60 天",
+                "目标": "参与需求分析和方案表达",
+                "关键任务": "梳理用户场景、参与需求评审、输出小需求 PRD",
+                "交付物": "PRD、低保真原型、验收标准",
+            },
+            {
+                "阶段": "61-90 天",
+                "目标": "跟进上线并用数据复盘效果",
+                "关键任务": "推动需求上线、收集反馈、分析核心指标变化",
+                "交付物": "上线复盘、数据分析、迭代建议",
+            },
+        ],
+        "销售": [
+            {
+                "阶段": "0-30 天",
+                "目标": "熟悉产品卖点、客户画像和销售流程",
+                "关键任务": "学习产品资料、旁听客户沟通、整理常见问题",
+                "交付物": "客户画像卡、产品话术、FAQ",
+            },
+            {
+                "阶段": "31-60 天",
+                "目标": "完成模拟拜访和真实客户跟进",
+                "关键任务": "准备拜访脚本、参与客户会议、复盘异议处理",
+                "交付物": "拜访记录、异议处理话术、跟进计划",
+            },
+            {
+                "阶段": "61-90 天",
+                "目标": "独立跟进低风险线索并沉淀方法",
+                "关键任务": "推进线索转化、维护客户关系、总结销售策略",
+                "交付物": "线索进展表、客户复盘、策略总结",
+            },
+        ],
+    }
+    return roadmaps.get(role, roadmaps["研发"])
 
 
 def find_weak_dimensions(profile: Mapping[str, object]) -> list[str]:
@@ -124,6 +192,7 @@ def generate_growth_plan(profile: Mapping[str, object], question: str = "") -> G
 
     return GrowthPlan(
         stage=stage,
+        roadmap_30_60_90=generate_30_60_90_roadmap(role),
         learning_focus=list(dict.fromkeys(learning_focus))[:5],
         recommended_tasks=recommended_tasks[:4],
         deliverables=deliverables,

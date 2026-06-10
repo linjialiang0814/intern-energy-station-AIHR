@@ -56,6 +56,9 @@ if generate_clicked or question:
     plan = generate_growth_plan(profile, question)
 
     st.subheader(f"当前阶段：{plan.stage}")
+    st.subheader("30-60-90 天成长路径")
+    st.dataframe(plan.roadmap_30_60_90, use_container_width=True, hide_index=True)
+
     c1, c2 = st.columns(2)
 
     with c1:

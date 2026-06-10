@@ -15,7 +15,7 @@
 - `Intern Profile` 可选择实习生并展示个人画像、任务记录、导师反馈和下一步动作。
 - `Mentor Assistant` 可生成导师反馈结构化分析。
 - `AI Weekly Report` 可生成 HR 周报正文并下载 Markdown。
-- `Intern Growth Assistant` 可生成实习生成长建议。
+- `Intern Growth Assistant` 可生成实习生成长建议和 30-60-90 天成长路径。
 
 ## 本地验收命令
 

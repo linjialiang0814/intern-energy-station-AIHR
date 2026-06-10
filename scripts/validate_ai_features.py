@@ -35,6 +35,7 @@ def main() -> int:
         "report_has_actions": "下周建议动作" in report,
         "outline_has_risk_list": "风险名单" in outline,
         "growth_has_focus": len(growth_plan.learning_focus) > 0,
+        "growth_has_30_60_90": len(growth_plan.roadmap_30_60_90) == 3,
         "growth_has_tasks": len(growth_plan.recommended_tasks) > 0,
         "growth_has_questions": len(growth_plan.mentor_questions) > 0,
         "growth_has_source": bool(growth_plan.llm_provider),

@@ -22,7 +22,7 @@ AI 驱动的业务部实习生成长导航智能看板。
 2. `Intern Profile`：实习生基础信息、能力评分、导师反馈、任务记录、风险原因。
 3. `Mentor Assistant`：导师反馈结构化分析，输出优点、问题、风险和带教建议。
 4. `AI Weekly Report`：自动生成 HR 周报正文和结构化周报要点。
-5. `Intern Growth Assistant`：根据岗位、周次和能力短板生成成长计划。
+5. `Intern Growth Assistant`：根据岗位、周次和能力短板生成本周成长建议与 30-60-90 天成长路径。
 
 ## 技术栈
 
